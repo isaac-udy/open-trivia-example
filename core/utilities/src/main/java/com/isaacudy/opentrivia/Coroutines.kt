@@ -35,8 +35,6 @@ data class CoroutineListener <T> internal constructor(
     private val completionListener: (T) -> Unit = {  },
     private val launchListener: () -> Unit = {  },
 ) {
-    private var isLaunched: Boolean = false
-
     fun onError(block: (Throwable) -> Unit): CoroutineListener<T> {
         return copy(
             throwableListener = block
