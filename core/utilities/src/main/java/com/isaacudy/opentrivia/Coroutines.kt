@@ -7,24 +7,6 @@ import java.lang.IllegalStateException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-internal class ThrowableListener {
-    internal var throwable: Throwable? = null
-        set(value) {
-            field = value
-            if(value == null) return
-            listener?.let { it(value) }
-        }
-
-    internal var listener: ((Throwable) -> Unit)? = null
-        set(value) {
-            if(value == null) return
-            if(field != null) throw IllegalStateException("Can't re-set the throwable listener")
-            field = value
-            throwable?.let(value)
-        }
-
-}
-
 data class CoroutineListener <T> internal constructor(
     val coroutineScope: CoroutineScope,
     val context: CoroutineContext = EmptyCoroutineContext,
