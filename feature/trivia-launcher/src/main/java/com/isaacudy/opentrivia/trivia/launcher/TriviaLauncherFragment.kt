@@ -27,7 +27,7 @@ class TriviaLauncherFragment : Fragment(R.layout.trivia_launcher_fragment) {
     private val navigation by navigationHandle<TriviaLauncherScreen>()
 
     private val adapter = TriviaCategoryAdapter {
-        navigation.forward(TriviaGameScreen(it.name))
+        navigation.forward(TriviaGameScreen(it.id))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

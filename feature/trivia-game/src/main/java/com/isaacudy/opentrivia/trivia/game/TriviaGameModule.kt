@@ -1,6 +1,6 @@
-package com.isaacudy.opentrivia.trivia.launcher
+package com.isaacudy.opentrivia.trivia.game
 
-import com.isaacudy.opentrivia.trivia.launcher.data.TriviaCategoryApi
+import com.isaacudy.opentrivia.trivia.game.data.TriviaGameApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -15,10 +15,10 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class TriviaModule {
+class TriviaLauncherModule {
     @Provides
     @Singleton
-    fun provideTriviaCategoryApi(): TriviaCategoryApi {
+    fun provideTriviaCategoryApi(): TriviaGameApi {
         val contentType = MediaType.get("application/json")
         return Retrofit.Builder()
             .baseUrl("https://opentdb.com")
