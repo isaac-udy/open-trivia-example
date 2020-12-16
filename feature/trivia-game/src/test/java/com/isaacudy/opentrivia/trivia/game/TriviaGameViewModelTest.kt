@@ -6,14 +6,18 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.isaacudy.opentrivia.navigation.TriviaGameScreen
+import com.isaacudy.opentrivia.navigation.TriviaResultScreen
 import com.isaacudy.opentrivia.trivia.game.data.*
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
 import nav.enro.core.NavigationHandle
+import nav.enro.core.NavigationInstruction
+import nav.enro.core.NavigationKey
 import nav.enro.viewmodel.enroViewModels
 import org.junit.Assert.*
 import org.junit.Before
@@ -46,18 +50,20 @@ class TriviaGameViewModelTest {
 
     @Test
     fun whenApiReturnsData_thenSelectedQuestionIsFirstQuestion() = runBlockingTest {
-        val environment = createValidTestEnvironment(listOf(
-            TriviaQuestionResponse(
-                question = "test",
-                correctAnswer = "correct answer",
-                incorrectAnswers = listOf("bad")
-            ),
-            TriviaQuestionResponse(
-                question = "test two",
-                correctAnswer = "correct answer",
-                incorrectAnswers = listOf("bad")
+        val environment = createValidTestEnvironment(
+            listOf(
+                TriviaQuestionResponse(
+                    question = "test",
+                    correctAnswer = "correct answer",
+                    incorrectAnswers = listOf("bad")
+                ),
+                TriviaQuestionResponse(
+                    question = "test two",
+                    correctAnswer = "correct answer",
+                    incorrectAnswers = listOf("bad")
+                )
             )
-        ))
+        )
         val viewModel = environment.createViewModel()
 
         val state = viewModel.state.value as TriviaGameState.Loaded
@@ -67,30 +73,84 @@ class TriviaGameViewModelTest {
 
     @Test
     fun whenFirstQuestionIsAnswered_thenSelectedQuestionIsSecondQuestion() = runBlockingTest {
-        val environment = createValidTestEnvironment(listOf(
-            TriviaQuestionResponse(
-                question = "1",
-                correctAnswer = "correct answer",
-                incorrectAnswers = listOf("bad")
-            ),
-            TriviaQuestionResponse(
-                question = "2",
-                correctAnswer = "correct answer",
-                incorrectAnswers = listOf("bad")
-            ),
-            TriviaQuestionResponse(
-                question = "3",
-                correctAnswer = "correct answer",
-                incorrectAnswers = listOf("bad")
+        val environment = createValidTestEnvironment(
+            listOf(
+                TriviaQuestionResponse(
+                    question = "1",
+                    correctAnswer = "correct answer",
+                    incorrectAnswers = listOf("bad")
+                ),
+                TriviaQuestionResponse(
+                    question = "2",
+                    correctAnswer = "correct answer",
+                    incorrectAnswers = listOf("bad")
+                ),
+                TriviaQuestionResponse(
+                    question = "3",
+                    correctAnswer = "correct answer",
+                    incorrectAnswers = listOf("bad")
+                )
             )
-        ))
+        )
         val viewModel = environment.createViewModel()
 
         val state = viewModel.state.value as TriviaGameState.Loaded
-        viewModel.onAnswerSelected(state.questions.first(), TriviaQuestionEntity.Answer("correct answer", true))
+        viewModel.onAnswerSelected(
+            state.questions.first(),
+            TriviaQuestionEntity.Answer("correct answer", true)
+        )
 
         val finalState = viewModel.state.value as TriviaGameState.Loaded
         assertEquals("2", finalState.selectedQuestion?.question)
+    }
+
+    @Test
+    fun whenAllQuestionsAreAnswered_thenNavigateToResultScreen() = runBlockingTest {
+        val environment = createValidTestEnvironment(
+            listOf(
+                TriviaQuestionResponse(
+                    question = "1",
+                    correctAnswer = "correct answer",
+                    incorrectAnswers = listOf("bad")
+                ),
+                TriviaQuestionResponse(
+                    question = "2",
+                    correctAnswer = "correct answer",
+                    incorrectAnswers = listOf("bad")
+                ),
+                TriviaQuestionResponse(
+                    question = "3",
+                    correctAnswer = "correct answer",
+                    incorrectAnswers = listOf("bad")
+                )
+            )
+        )
+        val viewModel = environment.createViewModel()
+
+        val state = viewModel.state.value as TriviaGameState.Loaded
+        viewModel.onAnswerSelected(
+            state.questions[0],
+            TriviaQuestionEntity.Answer("correct answer", true)
+        )
+        viewModel.onAnswerSelected(
+            state.questions[1],
+            TriviaQuestionEntity.Answer("correct answer", true)
+        )
+        viewModel.onAnswerSelected(
+            state.questions[2],
+            TriviaQuestionEntity.Answer("correct answer", true)
+        )
+
+        verify(exactly = 1) {
+            environment.navigationHandle.executeInstruction(
+                withArg {
+                    val open = it as? NavigationInstruction.Open<TriviaResultScreen>
+                    check(open?.navigationKey == TriviaResultScreen(
+                        listOf(true, true, true)
+                    ))
+                }
+            )
+        }
     }
 
     private fun createValidTestEnvironment(questions: List<TriviaQuestionResponse>): TestEnvironment {

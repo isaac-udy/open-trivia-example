@@ -7,9 +7,11 @@ import com.isaacudy.opentrivia.SingleStateViewModel
 import com.isaacudy.opentrivia.asListener
 import com.isaacudy.opentrivia.core.ui.ConfirmationScreen
 import com.isaacudy.opentrivia.navigation.TriviaGameScreen
+import com.isaacudy.opentrivia.navigation.TriviaResultScreen
 import com.isaacudy.opentrivia.trivia.game.data.TriviaGameRepository
 import com.isaacudy.opentrivia.trivia.game.data.TriviaQuestionEntity
 import nav.enro.core.close
+import nav.enro.core.replace
 import nav.enro.result.registerForNavigationResult
 import nav.enro.viewmodel.navigationHandle
 
@@ -101,6 +103,11 @@ class TriviaGameViewModel @ViewModelInject constructor(
 
     private fun checkCompletion() {
         val state = state.value as TriviaGameState.Loaded
-
+        val remainingQuestions = state.results.count { it == AnswerResult.NONE }
+        if(remainingQuestions == 0) {
+            navigation.replace(TriviaResultScreen(
+                answers = state.results.map { it == AnswerResult.CORRECT }
+            ))
+        }
     }
 }
