@@ -24,36 +24,60 @@ internal class ThrowableListener {
 
 }
 
-class SafeJob internal constructor(
-    private val throwableListener: ThrowableListener,
-    private val job: Job
-): Job by job {
-    fun onError(block: (Throwable) -> Unit): Job {
-        throwableListener.listener = block
-        return this
+data class CoroutineListener <T> internal constructor(
+    val coroutineScope: CoroutineScope,
+    val context: CoroutineContext = EmptyCoroutineContext,
+    val start: CoroutineStart = CoroutineStart.DEFAULT,
+    val block: suspend CoroutineScope.() -> T,
+
+    private val throwableListener: (Throwable) -> Unit = { },
+    private val completionListener: (T) -> Unit = {  },
+    private val launchListener: () -> Unit = {  },
+) {
+    private var isLaunched: Boolean = false
+
+    fun onError(block: (Throwable) -> Unit): CoroutineListener<T> {
+        return copy(
+            throwableListener = block
+        )
     }
-}
 
-fun CoroutineScope.launchCatching(
-    context: CoroutineContext = EmptyCoroutineContext,
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend CoroutineScope.() -> Unit
-): SafeJob {
+    fun onLaunch(block: () -> Unit): CoroutineListener<T> {
+        return copy(
+            launchListener = block
+        )
+    }
 
-    val throwableListener = ThrowableListener()
-    val job = launch(
-        context = context,
-        start = start,
-    ) {
-        try {
-            block()
-        }
-        catch (t: Throwable) {
-            withContext(Dispatchers.Main) {
-                throwableListener.throwable = t
+    fun onComplete(block: (T) -> Unit): CoroutineListener<T> {
+        return copy(
+            completionListener = block
+        )
+    }
+
+    fun launch(): Job {
+        onLaunch(launchListener)
+
+        return coroutineScope.launch(
+            context = context,
+            start = start,
+        ) {
+            try {
+                val result = block()
+                completionListener(result)
+            }
+            catch (t: Throwable) {
+                withContext(Dispatchers.Main) {
+                    throwableListener(t)
+                }
             }
         }
     }
+}
 
-    return SafeJob(throwableListener, job)
+fun <T: Any> CoroutineScope.asListener(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> T
+): CoroutineListener<T> {
+    return CoroutineListener(this, context, start, block)
 }

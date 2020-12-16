@@ -19,9 +19,18 @@ abstract class SingleStateViewModel<T: Any> : ViewModel() {
         stateFlow.asStateFlow()
     }
 
-    protected fun updateState(block: (T) -> T) {
+    protected fun updateState(block: T.() -> T) {
         stateFlow.value = block(stateFlow.value)
     }
+
+    fun <R: Any> CoroutineListener<R>.updateStateOnLaunch(block: T.() -> T): CoroutineListener<R> =
+        onLaunch { updateState { block() } }
+
+    fun <R: Any> CoroutineListener<R>.updateStateOnComplete(block: T.(R) -> T): CoroutineListener<R> =
+        onComplete { updateState { block(it) } }
+
+    fun <R: Any> CoroutineListener<R>.updateStateOnError(block: T.(Throwable) -> T): CoroutineListener<R> =
+        onError { updateState { block(it) } }
 }
 
 fun <T: Any> SingleStateViewModel<T>.observe(lifecycleOwner: LifecycleOwner, block: (T) -> Unit) {
