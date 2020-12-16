@@ -24,7 +24,7 @@ abstract class SingleStateViewModel<T: Any> : ViewModel() {
     }
 }
 
-fun <T: Any> SingleStateViewModel<T>.observe(lifecycleOwner: LifecycleOwner, block: (T) -> T) {
+fun <T: Any> SingleStateViewModel<T>.observe(lifecycleOwner: LifecycleOwner, block: (T) -> Unit) {
     lifecycleOwner.lifecycleScope.launchWhenCreated {
         state.collect {
             block(it)

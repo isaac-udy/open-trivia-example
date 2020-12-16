@@ -1,6 +1,7 @@
 package com.isaacudy.opentrivia.trivia.launcher.data
 
 import android.util.Log
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 class TriviaLauncherRepository @Inject constructor(
@@ -9,7 +10,6 @@ class TriviaLauncherRepository @Inject constructor(
 
     suspend fun getAllTriviaCategories(): List<TriviaCategoryEntity> {
         val categories = api.getApiCategories().triviaCategories
-
         return categories.map {
             TriviaCategoryEntity(
                 id = it.id,

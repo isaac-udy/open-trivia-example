@@ -22,7 +22,7 @@ ext.androidModule = { Boolean isApplication = false ->
             versionCode 1
             versionName "1.0"
 
-            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         }
 
         buildFeatures {
@@ -44,13 +44,10 @@ ext.androidModule = { Boolean isApplication = false ->
             jvmTarget = '1.8'
             freeCompilerArgs += [
                     '-module-name', project.path.replace(":", "_"),
-                    '-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi'
+                    '-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi',
+                    '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi'
             ]
         }
-
-        useLibrary 'android.test.runner'
-        useLibrary 'android.test.base'
-        useLibrary 'android.test.mock'
     }
 
     dependencies {
@@ -80,14 +77,16 @@ ext.androidModule = { Boolean isApplication = false ->
         kapt "androidx.hilt:hilt-compiler:$versions.hiltAndroid"
 
         testImplementation "androidx.test.ext:junit:$versions.junit_android"
+        testImplementation "junit:junit:$versions.junit"
+        testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
+        testImplementation "io.mockk:mockk:$versions.mockk"
+        testImplementation "androidx.test.ext:junit:$versions.junitAndroid"
         testImplementation "androidx.test.espresso:espresso-core:$versions.espresso"
         testImplementation "androidx.test:runner:$versions.testRunner"
-        kaptTest "com.google.dagger:hilt-android-compiler:$versions.hilt"
 
         androidTestImplementation "androidx.test.ext:junit:$versions.junitAndroid"
         androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso"
         androidTestImplementation "androidx.test:runner:$versions.testRunner"
-        kaptAndroidTest "com.google.dagger:hilt-android-compiler:$versions.hilt"
     }
 }
 
@@ -110,8 +109,9 @@ ext.versions = [
         material: "1.2.1",
         fragment: "1.2.5",
 
+        mockk: "1.10.3-jdk8",
         junit: "4.13.1",
-        junit_android: "1.1.2",
+        junitAndroid: "1.1.2",
         testRunner: "1.3.0",
         espresso: "3.3.0"
 ]
