@@ -1,5 +1,6 @@
 package com.isaacudy.opentrivia.trivia.game
 
+import android.util.SparseArray
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import com.isaacudy.opentrivia.SingleStateViewModel
@@ -15,8 +16,22 @@ sealed class TriviaGameState {
     object Error: TriviaGameState()
 
     data class Loaded(
-        val questions: List<TriviaQuestionEntity>
-    ): TriviaGameState()
+        val questions: List<TriviaQuestionEntity>,
+        val results: List<AnswerResult> = List(questions.size) { AnswerResult.NONE }
+    ): TriviaGameState() {
+        val selectedQuestion: TriviaQuestionEntity?
+            get() {
+                val selectedIndex = results.indexOfFirst { it == AnswerResult.NONE }
+                if(selectedIndex < 0) return null
+                return questions[selectedIndex]
+            }
+    }
+}
+
+enum class AnswerResult {
+    NONE,
+    CORRECT,
+    INCORRECT
 }
 
 class TriviaGameViewModel @ViewModelInject constructor(
@@ -30,7 +45,7 @@ class TriviaGameViewModel @ViewModelInject constructor(
         loadQuestions()
     }
 
-    private fun loadQuestions() {
+    fun loadQuestions() {
         if(state.value is TriviaGameState.Loading) return
 
         viewModelScope
@@ -47,5 +62,28 @@ class TriviaGameViewModel @ViewModelInject constructor(
                 TriviaGameState.Error
             }
             .launch()
+    }
+
+    fun onAnswerSelected(question: TriviaQuestionEntity, answer: TriviaQuestionEntity.Answer) {
+        val state = state.value as TriviaGameState.Loaded
+        val index = state.questions.indexOf(question)
+        if(index < 0) return
+
+        val result = if(answer.isCorrect) AnswerResult.CORRECT else AnswerResult.INCORRECT
+
+        updateState {
+            state.copy(
+                results = state.results.mapIndexed { resultIndex, it ->
+                    if(resultIndex == index) result else it
+                }
+            )
+        }
+
+        checkCompletion()
+    }
+
+    private fun checkCompletion() {
+        val state = state.value as TriviaGameState.Loaded
+
     }
 }

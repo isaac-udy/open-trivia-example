@@ -8,6 +8,7 @@ import com.isaacudy.opentrivia.navigation.SplashScreen
 import com.isaacudy.opentrivia.navigation.TriviaLauncherScreen
 import com.isaacudy.opentrivia.profile.ProfileRepository
 import kotlinx.coroutines.launch
+import nav.enro.core.forward
 import nav.enro.core.replace
 import nav.enro.viewmodel.navigationHandle
 
@@ -24,7 +25,7 @@ class SplashViewModel @ViewModelInject constructor(
                 null -> LoginScreen()
                 else -> TriviaLauncherScreen()
             }
-            navigation.replace(nextScreen)
+            navigation.forward(nextScreen)
         }
     }
 }

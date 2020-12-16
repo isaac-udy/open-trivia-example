@@ -19,12 +19,19 @@ class TriviaGameFragment : Fragment(R.layout.trivia_game_fragment) {
     private val viewModel by enroViewModels<TriviaGameViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.observe(this) {
-            if(it is TriviaGameState.Loaded) {
-                binding.questionFrame.removeAllViews()
-                binding.questionFrame.addView(TriviaQuestionView(requireContext()).apply {
-                    setQuestion(it.questions.first())
-                })
+        viewModel.observe(this, ::onStateUpdated)
+    }
+
+    private fun onStateUpdated(state: TriviaGameState) {
+        when(state) {
+            TriviaGameState.None -> {}
+            TriviaGameState.Loading -> {}
+            TriviaGameState.Error -> {}
+            is TriviaGameState.Loaded -> {
+                val question = state.selectedQuestion ?: return
+                binding.question.setQuestion(question) {
+                    viewModel.onAnswerSelected(question, it)
+                }
             }
         }
     }

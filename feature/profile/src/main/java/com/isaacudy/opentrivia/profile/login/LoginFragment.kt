@@ -13,6 +13,7 @@ import nav.enro.annotations.NavigationDestination
 import nav.enro.core.NavigationKey
 import nav.enro.core.forward
 import nav.enro.core.getNavigationHandle
+import nav.enro.core.replace
 
 @AndroidEntryPoint
 @NavigationDestination(LoginScreen::class)
@@ -22,7 +23,7 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.loginButton.setOnClickListener {
-            getNavigationHandle<NavigationKey>().forward(TriviaLauncherScreen())
+            getNavigationHandle<NavigationKey>().replace(TriviaLauncherScreen())
         }
     }
 }
