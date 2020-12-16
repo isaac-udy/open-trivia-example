@@ -1,0 +1,11 @@
+androidModule(true)
+
+android {
+    defaultConfig {
+        applicationId "com.isaacudy.opentrivia"
+    }
+}
+
+dependencies {
+
+}
