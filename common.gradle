@@ -25,6 +25,10 @@ ext.androidModule = { Boolean isApplication = false ->
             testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         }
 
+        buildFeatures {
+            viewBinding true
+        }
+
         buildTypes {
             release {
                 minifyEnabled false
@@ -56,10 +60,12 @@ ext.androidModule = { Boolean isApplication = false ->
         implementation "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
         implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
         implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
+        implementation "androidx.fragment:fragment-ktx:$versions.fragment"
 
         implementation "com.google.android.material:material:$versions.material"
 
         implementation "nav.enro:enro:$versions.enro"
+        kapt "nav.enro:enro-processor:$versions.enro"
 
         implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
 
@@ -96,6 +102,7 @@ ext.versions = [
         constraintlayout: "2.0.4",
         lifecycle: "2.2.0",
         material: "1.2.1",
+        fragment: "1.2.5",
 
         junit: "4.13.1",
         junit_android: "1.1.2",
