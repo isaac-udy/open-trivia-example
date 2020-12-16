@@ -5,9 +5,12 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import com.isaacudy.opentrivia.SingleStateViewModel
 import com.isaacudy.opentrivia.asListener
+import com.isaacudy.opentrivia.core.ui.ConfirmationScreen
 import com.isaacudy.opentrivia.navigation.TriviaGameScreen
 import com.isaacudy.opentrivia.trivia.game.data.TriviaGameRepository
 import com.isaacudy.opentrivia.trivia.game.data.TriviaQuestionEntity
+import nav.enro.core.close
+import nav.enro.result.registerForNavigationResult
 import nav.enro.viewmodel.navigationHandle
 
 sealed class TriviaGameState {
@@ -41,8 +44,22 @@ class TriviaGameViewModel @ViewModelInject constructor(
 
     private val navigation by navigationHandle<TriviaGameScreen>()
 
+    private val confirmCancelled by registerForNavigationResult<Boolean>(navigation) {
+        if(it) {
+            navigation.close()
+        }
+    }
+
     init {
         loadQuestions()
+        navigation.onCloseRequested {
+            confirmCancelled.open(ConfirmationScreen(
+                title = "Are you sure?",
+                message = "If you exit the quiz, you will lose your progress!",
+                negativeButton = "Cancel",
+                positiveButton = "Exit"
+            ))
+        }
     }
 
     fun loadQuestions() {

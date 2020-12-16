@@ -16,4 +16,7 @@ class TriviaLauncherScreen : NavigationKey
 data class TriviaGameScreen(val categoryId: Int) : NavigationKey
 
 @Parcelize
-class TriviaResultScreen : NavigationKey
+class TriviaResultScreen(
+    val categoryName: String,
+    val answers: List<Boolean>
+) : NavigationKey

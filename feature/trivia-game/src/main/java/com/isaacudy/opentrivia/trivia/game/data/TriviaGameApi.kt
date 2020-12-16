@@ -22,10 +22,9 @@ data class TriviaQuestionsResponse(
 
 @Serializable
 data class TriviaQuestionResponse(
-    @SerialName("category") val categoryName: String,
-    val type: String,
-    val difficulty: String,
+    @SerialName("category") val categoryName: String = "",
+    val difficulty: String = "medium",
     val question: String,
     @SerialName("correct_answer") val correctAnswer: String,
-    @SerialName("incorrect_answers") val incorrectAnswers: List<String>
+    @SerialName("incorrect_answers") val incorrectAnswers: List<String> = emptyList()
 )
