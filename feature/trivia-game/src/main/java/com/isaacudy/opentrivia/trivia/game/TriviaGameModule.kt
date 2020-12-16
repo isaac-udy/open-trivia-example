@@ -22,7 +22,9 @@ class TriviaLauncherModule {
         val contentType = MediaType.get("application/json")
         return Retrofit.Builder()
             .baseUrl("https://opentdb.com")
-            .addConverterFactory(Json.asConverterFactory(contentType))
+            .addConverterFactory(Json {
+                ignoreUnknownKeys = true
+            }.asConverterFactory(contentType))
             .build()
             .create()
     }

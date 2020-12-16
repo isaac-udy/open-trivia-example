@@ -1,5 +1,6 @@
 package com.isaacudy.opentrivia
 
+import android.util.Log
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.lang.IllegalStateException
@@ -66,6 +67,7 @@ data class CoroutineListener <T> internal constructor(
                 completionListener(result)
             }
             catch (t: Throwable) {
+                Log.e("CoroutineListener", "Received error", t)
                 withContext(Dispatchers.Main) {
                     throwableListener(t)
                 }
