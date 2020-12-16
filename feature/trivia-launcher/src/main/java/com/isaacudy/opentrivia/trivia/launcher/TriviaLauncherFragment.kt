@@ -2,8 +2,10 @@ package com.isaacudy.opentrivia.trivia.launcher
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.isaacudy.opentrivia.core.ui.ErrorViewParameters
 import com.isaacudy.opentrivia.navigation.TriviaGameScreen
 import com.isaacudy.opentrivia.navigation.TriviaLauncherScreen
 import com.isaacudy.opentrivia.observe
@@ -31,18 +33,48 @@ class TriviaLauncherFragment : Fragment(R.layout.trivia_launcher_fragment) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
+        initialiseRecyclerView()
+        initialiseErrorView()
         viewModel.observe(this, ::onStateUpdated)
     }
 
-    private fun onStateUpdated(state: TriviaLauncherState) = when(state) {
-        TriviaLauncherState.None -> { }
-        TriviaLauncherState.Loading -> {}
-        TriviaLauncherState.Error -> { }
-        is TriviaLauncherState.Loaded -> {
-            adapter.submitList(state.categories)
+    private fun initialiseRecyclerView() {
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.swipeRefreshView.setOnRefreshListener {
+            viewModel.onRefreshed()
+        }
+    }
+
+    private fun initialiseErrorView() {
+        binding.errorView.set(
+            ErrorViewParameters(
+                title = "Whoops",
+                message = "It looks like something went wrong, please try again",
+                button = "Retry",
+                onButtonClicked = { viewModel.onRefreshed() }
+            )
+        )
+    }
+
+    private fun onStateUpdated(state: TriviaLauncherState) {
+
+        binding.errorView.isVisible = state is TriviaLauncherState.Error
+
+        binding.swipeRefreshView.isVisible = state is TriviaLauncherState.Loaded || state is TriviaLauncherState.Loading
+        binding.swipeRefreshView.isRefreshing = state is TriviaLauncherState.Loading
+
+        when (state) {
+            TriviaLauncherState.None -> {
+            }
+            TriviaLauncherState.Loading -> {
+            }
+            TriviaLauncherState.Error -> {
+            }
+            is TriviaLauncherState.Loaded -> {
+                adapter.submitList(state.categories)
+            }
         }
     }
 }

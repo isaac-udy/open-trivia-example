@@ -14,7 +14,7 @@ class TriviaCategoryAdapter(
 ) : ListAdapter<TriviaCategoryEntity, TriviaCategoryAdapter.TriviaCategoryViewHolder>(createDefaultDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TriviaCategoryViewHolder {
         return TriviaCategoryViewHolder(
-            TriviaLauncherCategoryItemBinding.inflate(LayoutInflater.from(parent.context))
+            TriviaLauncherCategoryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
