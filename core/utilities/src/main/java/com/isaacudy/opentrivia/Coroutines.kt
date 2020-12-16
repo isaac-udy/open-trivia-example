@@ -56,7 +56,7 @@ data class CoroutineListener <T> internal constructor(
     }
 
     fun launch(): Job {
-        onLaunch(launchListener)
+        launchListener()
 
         return coroutineScope.launch(
             context = context,
