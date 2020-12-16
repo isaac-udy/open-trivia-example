@@ -13,7 +13,7 @@ class LoginScreen : NavigationKey
 class TriviaLauncherScreen : NavigationKey
 
 @Parcelize
-class TriviaGameScreen : NavigationKey
+data class TriviaGameScreen(val categoryName: String) : NavigationKey
 
 @Parcelize
 class TriviaResultScreen : NavigationKey

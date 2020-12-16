@@ -5,9 +5,11 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import com.isaacudy.opentrivia.SingleStateViewModel
 import com.isaacudy.opentrivia.asListener
+import com.isaacudy.opentrivia.navigation.TriviaLauncherScreen
 import com.isaacudy.opentrivia.trivia.launcher.data.TriviaCategoryEntity
 import com.isaacudy.opentrivia.trivia.launcher.data.TriviaLauncherRepository
 import kotlinx.coroutines.launch
+import nav.enro.viewmodel.navigationHandle
 
 sealed class TriviaLauncherState {
     object None : TriviaLauncherState()

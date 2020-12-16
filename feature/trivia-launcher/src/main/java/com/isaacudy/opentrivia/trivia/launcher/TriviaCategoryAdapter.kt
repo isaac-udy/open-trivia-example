@@ -9,7 +9,9 @@ import com.isaacudy.opentrivia.createDefaultDiffUtil
 import com.isaacudy.opentrivia.trivia.launcher.data.TriviaCategoryEntity
 import com.isaacudy.opentrivia.trivia.launcher.databinding.TriviaLauncherCategoryItemBinding
 
-class TriviaCategoryAdapter : ListAdapter<TriviaCategoryEntity, TriviaCategoryViewHolder>(createDefaultDiffUtil()) {
+class TriviaCategoryAdapter(
+    private val onItemSelected: (TriviaCategoryEntity) -> Unit
+) : ListAdapter<TriviaCategoryEntity, TriviaCategoryAdapter.TriviaCategoryViewHolder>(createDefaultDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TriviaCategoryViewHolder {
         return TriviaCategoryViewHolder(
             TriviaLauncherCategoryItemBinding.inflate(LayoutInflater.from(parent.context))
@@ -19,13 +21,14 @@ class TriviaCategoryAdapter : ListAdapter<TriviaCategoryEntity, TriviaCategoryVi
     override fun onBindViewHolder(holder: TriviaCategoryViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-}
 
-class TriviaCategoryViewHolder(
-    private val binding: TriviaLauncherCategoryItemBinding
-) : RecyclerView.ViewHolder(binding.root) {
+    inner class TriviaCategoryViewHolder(
+        private val binding: TriviaLauncherCategoryItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: TriviaCategoryEntity) {
-        binding.itemName.text = item.name
+        fun bind(item: TriviaCategoryEntity) {
+            binding.itemName.text = item.name
+            binding.root.setOnClickListener { onItemSelected(item) }
+        }
     }
 }

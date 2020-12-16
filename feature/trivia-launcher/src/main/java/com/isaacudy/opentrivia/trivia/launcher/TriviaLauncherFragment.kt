@@ -14,6 +14,7 @@ import nav.enro.annotations.NavigationDestination
 import nav.enro.core.NavigationKey
 import nav.enro.core.forward
 import nav.enro.core.getNavigationHandle
+import nav.enro.core.navigationHandle
 import nav.enro.viewmodel.enroViewModels
 
 @AndroidEntryPoint
@@ -22,7 +23,12 @@ class TriviaLauncherFragment : Fragment(R.layout.trivia_launcher_fragment) {
 
     private val binding by viewBinding<TriviaLauncherFragmentBinding>()
     private val viewModel by enroViewModels<TriviaLauncherViewModel>()
-    private val adapter = TriviaCategoryAdapter()
+
+    private val navigation by navigationHandle<TriviaLauncherScreen>()
+
+    private val adapter = TriviaCategoryAdapter {
+        navigation.forward(TriviaGameScreen(it.name))
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.recyclerView.adapter = adapter
