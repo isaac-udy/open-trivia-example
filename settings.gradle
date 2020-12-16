@@ -1,2 +1,8 @@
 include ":app"
+
 include ":core:navigation"
+
+include ":feature:profile"
+include ":feature:trivia-game"
+include ":feature:trivia-launcher"
+include ":feature:trivia-result"
