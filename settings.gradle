@@ -6,6 +6,7 @@ include ":core:ui"
 
 include ":data:profile"
 
+include ":feature:splash"
 include ":feature:profile"
 include ":feature:trivia-game"
 include ":feature:trivia-launcher"

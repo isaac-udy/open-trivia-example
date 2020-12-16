@@ -13,6 +13,7 @@ dependencies {
 
     implementation project(":data:profile")
 
+    implementation project(":feature:splash")
     implementation project(":feature:profile")
     implementation project(":feature:trivia-game")
     implementation project(":feature:trivia-launcher")

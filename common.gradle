@@ -38,6 +38,7 @@ ext.androidModule = { Boolean isApplication = false ->
 
         kotlinOptions {
             jvmTarget = '1.8'
+            freeCompilerArgs += ['-module-name', project.path.replace(":", "_")]
         }
 
         useLibrary 'android.test.runner'
@@ -53,6 +54,10 @@ ext.androidModule = { Boolean isApplication = false ->
 
         implementation "androidx.appcompat:appcompat:$versions.appcompat"
         implementation "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
+        implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+        implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
+
+        implementation "com.google.android.material:material:$versions.material"
 
         implementation "nav.enro:enro:$versions.enro"
 
@@ -89,6 +94,8 @@ ext.versions = [
 
         appcompat: "1.2.0",
         constraintlayout: "2.0.4",
+        lifecycle: "2.2.0",
+        material: "1.2.1",
 
         junit: "4.13.1",
         junit_android: "1.1.2",
