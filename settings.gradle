@@ -1,6 +1,10 @@
 include ":app"
 
 include ":core:navigation"
+include ":core:utilities"
+include ":core:ui"
+
+include ":data:profile"
 
 include ":feature:profile"
 include ":feature:trivia-game"
