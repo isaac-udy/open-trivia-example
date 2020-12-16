@@ -20,18 +20,38 @@ class TriviaQuestionView @JvmOverloads constructor(
         TriviaAnswerView(context)
     }
 
-    fun setQuestion(question: TriviaQuestionEntity, onAnswerSelected: (TriviaQuestionEntity.Answer) -> Unit) {
+    init {
+        if(isInEditMode) {
+            answers.forEach {
+                it.setAnswer(TriviaQuestionEntity.Answer("Answer Here", false), TriviaAnswerView.State.NONE){}
+                view.questionAnswers.addView(it)
+            }
+        }
+    }
+
+    fun setQuestion(question: TriviaQuestionEntity, result: AnswerResult, callback: (TriviaQuestionEntity.Answer) -> Unit) {
         view.questionText.text = question.question
         view.questionAnswers.removeAllViews()
 
         question.answers
             .zip(answers)
             .forEach { (answer, answerView) ->
-                answerView.setAnswer(answer) {
-                    onAnswerSelected(answer)
+                val resultState = when {
+                    result is AnswerResult.Correct && answer.answer == result.answer -> TriviaAnswerView.State.CORRECT
+                    result is AnswerResult.Incorrect && answer.isCorrect -> TriviaAnswerView.State.CORRECT
+                    result is AnswerResult.Incorrect && answer.answer == result.answer -> TriviaAnswerView.State.INCORRECT
+                    else -> TriviaAnswerView.State.NONE
+                }
+                answerView.setAnswer(answer, resultState) {
+                    onAnswerSelected(answer, callback)
                 }
                 view.questionAnswers.addView(answerView)
             }
+    }
+
+    private fun onAnswerSelected(answer: TriviaQuestionEntity.Answer, callback: (TriviaQuestionEntity.Answer) -> Unit) {
+
+        callback(answer)
     }
 
 }

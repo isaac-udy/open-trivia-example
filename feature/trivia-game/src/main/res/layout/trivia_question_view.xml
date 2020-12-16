@@ -13,6 +13,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:padding="16dp"
+        android:gravity="center"
         tools:text="What is this text view being used for in this layout?"
         android:textSize="24sp"/>
 
