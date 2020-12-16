@@ -41,7 +41,7 @@ class TriviaLauncherViewModel @ViewModelInject constructor(
             }
             .updateStateOnComplete {
                 TriviaLauncherState.Loaded(
-                    categories = it
+                    categories = it.sortedBy { item -> item.name }
                 )
             }
             .updateStateOnError {

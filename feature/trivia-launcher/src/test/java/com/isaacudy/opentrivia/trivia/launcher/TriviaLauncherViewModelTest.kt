@@ -67,6 +67,28 @@ class TriviaLauncherViewModelTest {
         }
     }
 
+    @Test
+    fun whenViewModelIsLoaded_thenCategoriesAreOrganisedAlphabetically() = runBlockingTest {
+        val trackingCategoriesResponse = TriviaCategoriesResponse(
+            listOf(
+                TriviaCategoryResponse(1, "zzzz"),
+                TriviaCategoryResponse(3, "ffff"),
+                TriviaCategoryResponse(2, "aaaa")
+            )
+        )
+        val triviaCategoryApi = mockk<TriviaCategoryApi>()
+        coEvery { triviaCategoryApi.getApiCategories() }.returns(trackingCategoriesResponse)
+
+        val viewModel = createViewModel(triviaCategoryApi)
+
+        val state = viewModel.state.value as TriviaLauncherState.Loaded
+        val loadedCategories = state.categories
+
+        assertEquals("aaaa", loadedCategories[0].name)
+        assertEquals("ffff", loadedCategories[1].name)
+        assertEquals("zzzz", loadedCategories[2].name)
+    }
+
     private fun createViewModel(triviaCategoryApi: TriviaCategoryApi) = TriviaLauncherViewModel(
         TriviaLauncherRepository(triviaCategoryApi)
     )
