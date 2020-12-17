@@ -3,7 +3,10 @@
     package="com.isaacudy.opentrivia.splash">
 
     <application>
-        <activity android:name=".SplashActivity" android:noHistory="true">
+        <activity
+            android:name=".SplashActivity"
+            android:noHistory="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
