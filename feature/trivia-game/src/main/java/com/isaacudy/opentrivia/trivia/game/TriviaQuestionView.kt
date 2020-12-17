@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import com.isaacudy.opentrivia.trivia.game.data.TriviaQuestionEntity
 import com.isaacudy.opentrivia.trivia.game.databinding.TriviaAnswerViewBinding
 import com.isaacudy.opentrivia.trivia.game.databinding.TriviaQuestionViewBinding
@@ -30,7 +31,19 @@ class TriviaQuestionView @JvmOverloads constructor(
     }
 
     fun setQuestion(question: TriviaQuestionEntity, result: AnswerResult, onAnswerSelected: (TriviaQuestionEntity.Answer) -> Unit) {
-        view.questionText.text = question.question
+        if(view.questionText.text != question.question) {
+            view.questionText.animate()
+                .alpha(0f)
+                .setDuration(150)
+                .withEndAction {
+                    view.questionText.text = question.question
+                    view.questionText.animate()
+                        .alpha(1f)
+                        .setDuration(150)
+                        .start()
+                }
+                .start()
+        }
 
         val visibleAnswers = question.answers
             .zip(answers)

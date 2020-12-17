@@ -45,6 +45,7 @@ class TriviaLauncherFragment : Fragment(R.layout.trivia_launcher_fragment) {
         binding.swipeRefreshView.setOnRefreshListener {
             viewModel.onRefreshed()
         }
+        binding.swipeRefreshView.setColorSchemeResources(R.color.primary)
     }
 
     private fun initialiseErrorView() {

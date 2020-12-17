@@ -28,7 +28,7 @@ class ConfirmationDialog : DialogFragment() {
         val key = navigation.key
         return AlertDialog.Builder(requireContext())
             .setTitle(key.title)
-            .setMessage(key.title)
+            .setMessage(key.message)
             .setCancelable(false)
             .setPositiveButton(key.positiveButton) { _, _ ->
                 navigation.closeWithResult(true)

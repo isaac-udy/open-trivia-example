@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.isaacudy.opentrivia.SingleStateViewModel
 import com.isaacudy.opentrivia.asListener
 import com.isaacudy.opentrivia.core.ui.ConfirmationScreen
+import com.isaacudy.opentrivia.core.ui.TransientMessageScreen
 import com.isaacudy.opentrivia.navigation.TriviaGameScreen
 import com.isaacudy.opentrivia.navigation.TriviaResultScreen
 import com.isaacudy.opentrivia.trivia.game.data.TriviaGameRepository
@@ -13,6 +14,7 @@ import com.isaacudy.opentrivia.trivia.game.data.TriviaQuestionEntity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nav.enro.core.close
+import nav.enro.core.forward
 import nav.enro.core.replace
 import nav.enro.result.registerForNavigationResult
 import nav.enro.viewmodel.navigationHandle
@@ -56,7 +58,7 @@ class TriviaGameViewModel @ViewModelInject constructor(
             confirmCancelled.open(
                 ConfirmationScreen(
                     title = "Are you sure?",
-                    message = "If you exit the quiz, you will lose your progress!",
+                    message = "If you exit the quiz, you will lose your progress.",
                     negativeButton = "Cancel",
                     positiveButton = "Exit"
                 )
@@ -90,7 +92,17 @@ class TriviaGameViewModel @ViewModelInject constructor(
         if (state.results[index] !is AnswerResult.None) return
         if (state.selectedQuestion != question) return
 
-        val result = if (answer.isCorrect) AnswerResult.Correct(answer.answer) else AnswerResult.Incorrect(answer.answer)
+        val result =
+            if (answer.isCorrect) AnswerResult.Correct(answer.answer) else AnswerResult.Incorrect(
+                answer.answer
+            )
+
+        val answerMessage = TransientMessageScreen(
+            text = if (answer.isCorrect) "Correct!" else "Incorrect",
+            color = if (answer.isCorrect) R.color.primary else R.color.red,
+            duration = 1500
+        )
+        navigation.forward(answerMessage)
 
         viewModelScope
             .asListener {
