@@ -2,6 +2,7 @@ package com.isaacudy.opentrivia.splash
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.isaacudy.opentrivia.navigation.LoginScreen
 import com.isaacudy.opentrivia.navigation.SplashScreen
 import com.isaacudy.opentrivia.observe
 import dagger.hilt.android.AndroidEntryPoint
