@@ -29,13 +29,12 @@ class TriviaQuestionView @JvmOverloads constructor(
         }
     }
 
-    fun setQuestion(question: TriviaQuestionEntity, result: AnswerResult, callback: (TriviaQuestionEntity.Answer) -> Unit) {
+    fun setQuestion(question: TriviaQuestionEntity, result: AnswerResult, onAnswerSelected: (TriviaQuestionEntity.Answer) -> Unit) {
         view.questionText.text = question.question
-        view.questionAnswers.removeAllViews()
 
-        question.answers
+        val visibleAnswers = question.answers
             .zip(answers)
-            .forEach { (answer, answerView) ->
+            .map { (answer, answerView) ->
                 val resultState = when {
                     result is AnswerResult.Correct && answer.answer == result.answer -> TriviaAnswerView.State.CORRECT
                     result is AnswerResult.Incorrect && answer.isCorrect -> TriviaAnswerView.State.CORRECT
@@ -43,15 +42,21 @@ class TriviaQuestionView @JvmOverloads constructor(
                     else -> TriviaAnswerView.State.NONE
                 }
                 answerView.setAnswer(answer, resultState) {
-                    onAnswerSelected(answer, callback)
+                    onAnswerSelected(answer)
                 }
-                view.questionAnswers.addView(answerView)
+
+                answerView
             }
+
+        answers.forEach {
+            if(visibleAnswers.contains(it)) {
+                if(it.parent == null) {
+                    view.questionAnswers.addView(it)
+                }
+            }
+            else {
+                view.questionAnswers.removeView(it)
+            }
+        }
     }
-
-    private fun onAnswerSelected(answer: TriviaQuestionEntity.Answer, callback: (TriviaQuestionEntity.Answer) -> Unit) {
-
-        callback(answer)
-    }
-
 }

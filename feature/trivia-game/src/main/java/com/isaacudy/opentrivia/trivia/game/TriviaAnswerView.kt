@@ -1,11 +1,13 @@
 package com.isaacudy.opentrivia.trivia.game
 
 import android.content.Context
+import android.graphics.drawable.TransitionDrawable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import com.isaacudy.opentrivia.trivia.game.data.TriviaQuestionEntity
 import com.isaacudy.opentrivia.trivia.game.databinding.TriviaAnswerViewBinding
 import com.isaacudy.opentrivia.trivia.game.databinding.TriviaQuestionViewBinding
@@ -13,14 +15,6 @@ import com.isaacudy.opentrivia.trivia.game.databinding.TriviaQuestionViewBinding
 class TriviaAnswerView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr)  {
-
-    private val selectableItemBackground by lazy {
-        val out = TypedValue()
-        context.theme.resolveAttribute(android.R.attr.selectableItemBackground, out, true);
-        out.resourceId
-    }
-
-
     private val view = TriviaAnswerViewBinding.inflate(LayoutInflater.from(context))
         .also { addView(it.root) }
 
@@ -30,15 +24,19 @@ class TriviaAnswerView @JvmOverloads constructor(
         when(state) {
             State.NONE -> {
                 view.root.setOnClickListener { onSelected() }
-                view.root.setBackgroundResource(selectableItemBackground)
+                view.root.setBackgroundResource(android.R.color.transparent)
             }
-            State.CORRECT -> {
+            else -> {
                 view.root.setOnClickListener(null)
-                view.root.setBackgroundResource(R.color.primary)
-            }
-            State.INCORRECT -> {
-                view.root.setOnClickListener(null)
-                view.root.setBackgroundResource(R.color.red)
+
+                val backgroundColour = if(state == State.CORRECT) R.color.primary else R.color.red
+                val transition = TransitionDrawable(arrayOf(
+                    ContextCompat.getDrawable(context, android.R.color.transparent),
+                    ContextCompat.getDrawable(context, backgroundColour)
+                ))
+
+                view.root.background = transition
+                transition.startTransition(150)
             }
         }
     }
