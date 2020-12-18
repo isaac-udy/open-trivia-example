@@ -32,19 +32,24 @@ class TriviaQuestionView @JvmOverloads constructor(
 
     fun setQuestion(question: TriviaQuestionEntity, result: AnswerResult, onAnswerSelected: (TriviaQuestionEntity.Answer) -> Unit) {
         if(view.questionText.text != question.question) {
-            view.questionText.animate()
+            view.root.animate()
                 .alpha(0f)
-                .setDuration(150)
+                .translationY(75f)
+                .setDuration(250)
                 .withEndAction {
                     view.questionText.text = question.question
-                    view.questionText.animate()
+                    updateAnswers(question, result, onAnswerSelected)
+                    view.root.animate()
                         .alpha(1f)
-                        .setDuration(150)
+                        .translationY(0f)
+                        .setDuration(250)
                         .start()
                 }
                 .start()
-        }
+        } else updateAnswers(question, result, onAnswerSelected)
+    }
 
+    private fun updateAnswers(question: TriviaQuestionEntity, result: AnswerResult, onAnswerSelected: (TriviaQuestionEntity.Answer) -> Unit) {
         val visibleAnswers = question.answers
             .zip(answers)
             .map { (answer, answerView) ->
